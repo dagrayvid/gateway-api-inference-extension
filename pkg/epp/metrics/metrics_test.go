@@ -39,6 +39,7 @@ const (
 	NormalizedTimePerOutputTokenMetric = InferenceModelComponent + "_normalized_time_per_output_token_seconds"
 	RunningRequestsMetric              = InferenceModelComponent + "_running_requests"
 	KVCacheAvgUsageMetric              = InferencePoolComponent + "_average_kv_cache_utilization"
+	RequestsRunningAvgMetric           = InferencePoolComponent + "_average_requests_running"
 	QueueAvgSizeMetric                 = InferencePoolComponent + "_average_queue_size"
 	PerPodQueueSizeMetrics             = InferencePoolComponent + "_per_pod_queue_size"
 )
@@ -528,6 +529,7 @@ func TestInferencePoolMetrics(t *testing.T) {
 		t.Run(scenario.name, func(t *testing.T) {
 			RecordInferencePoolAvgKVCache(scenario.poolName, scenario.kvCacheAvg)
 			RecordInferencePoolAvgQueueSize(scenario.poolName, scenario.queueSizeAvg)
+			RecordInferencePoolAvgRequestsRunning(scenario.poolName, scenario.queueSizeAvg)
 
 			wantKVCache, err := os.Open("testdata/kv_cache_avg_metrics")
 			defer func() {
@@ -552,6 +554,19 @@ func TestInferencePoolMetrics(t *testing.T) {
 				t.Fatal(err)
 			}
 			if err := testutil.GatherAndCompare(metrics.Registry, wantQueueSize, QueueAvgSizeMetric); err != nil {
+				t.Error(err)
+			}
+
+			wantRequestsRunning, err := os.Open("testdata/requests_running_avg_metrics")
+			defer func() {
+				if err := wantRequestsRunning.Close(); err != nil {
+					t.Error(err)
+				}
+			}()
+			if err != nil {
+				t.Fatal(err)
+			}
+			if err := testutil.GatherAndCompare(metrics.Registry, wantRequestsRunning, RequestsRunningAvgMetric); err != nil {
 				t.Error(err)
 			}
 		})

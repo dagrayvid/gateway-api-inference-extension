@@ -97,5 +97,9 @@ func (p *RandomPicker) Pick(ctx context.Context, _ *types.CycleState, scoredPods
 		targetPods[i] = scoredPod
 	}
 
-	return &types.ProfileRunResult{TargetPods: targetPods}
+	result := &types.ProfileRunResult{TargetPods: targetPods}
+	if len(targetPods) > 0 {
+		result.TargetPod = targetPods[0]
+	}
+	return result
 }

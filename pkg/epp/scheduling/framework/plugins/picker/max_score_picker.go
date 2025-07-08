@@ -103,6 +103,10 @@ func (p *MaxScorePicker) Pick(ctx context.Context, cycleState *types.CycleState,
 		targetPods[i] = scoredPod
 	}
 
-	return &types.ProfileRunResult{TargetPods: targetPods}
+	result := &types.ProfileRunResult{TargetPods: targetPods}
+	if len(targetPods) > 0 {
+		result.TargetPod = targetPods[0]
+	}
+	return result
 
 }

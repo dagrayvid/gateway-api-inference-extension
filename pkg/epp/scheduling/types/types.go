@@ -73,6 +73,18 @@ type PodMetrics struct {
 // ProfileRunResult captures the profile run result.
 type ProfileRunResult struct {
 	TargetPods []Pod
+	// TargetPod is the primary target pod (first pod from TargetPods)
+	// This field provides backward compatibility for code that expects a single TargetPod field.
+	TargetPod Pod
+}
+
+// TargetPod returns the first pod from the TargetPods slice.
+// This provides backward compatibility for code that expects a single TargetPod.
+func (p *ProfileRunResult) GetTargetPod() Pod {
+	if len(p.TargetPods) == 0 {
+		return nil
+	}
+	return p.TargetPods[0]
 }
 
 // SchedulingResult captures the result of the scheduling cycle.

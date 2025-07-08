@@ -42,6 +42,7 @@ var (
 	pod1NamespacedName = types.NamespacedName{Name: pod1.Name, Namespace: pod1.Namespace}
 	pod1Metrics        = &backendmetrics.MetricsState{
 		WaitingQueueSize:    100,
+		RunningRequestsSize: 50,
 		KVCacheUsagePercent: 0.2,
 		MaxActiveModels:     2,
 	}
@@ -94,7 +95,10 @@ func TestMetricsCollected(t *testing.T) {
 		# HELP inference_pool_per_pod_queue_size [ALPHA] The total number of requests pending in the model server queue for each underlying pod.
 		# TYPE inference_pool_per_pod_queue_size gauge
 		inference_pool_per_pod_queue_size{model_server_pod="pod1",name="test-pool"} 100
-`), "inference_pool_per_pod_queue_size")
+		# HELP inference_pool_per_pod_requests_running [ALPHA] The total number of requests currently running in the model server for each underlying pod.
+		# TYPE inference_pool_per_pod_requests_running gauge
+		inference_pool_per_pod_requests_running{model_server_pod="pod1",name="test-pool"} 50
+`), "inference_pool_per_pod_queue_size", "inference_pool_per_pod_requests_running")
 	if err != nil {
 		t.Fatal(err)
 	}

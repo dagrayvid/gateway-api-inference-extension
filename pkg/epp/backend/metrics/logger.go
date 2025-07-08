@@ -95,6 +95,7 @@ func refreshPrometheusMetrics(logger logr.Logger, datastore Datastore) {
 	}
 
 	var kvCacheTotal float64
+	var runningTotal int
 	var queueTotal int
 
 	podMetrics := datastore.PodGetAll()
@@ -105,11 +106,13 @@ func refreshPrometheusMetrics(logger logr.Logger, datastore Datastore) {
 
 	for _, pod := range podMetrics {
 		kvCacheTotal += pod.GetMetrics().KVCacheUsagePercent
+		runningTotal += pod.GetMetrics().RunningRequestsSize
 		queueTotal += pod.GetMetrics().WaitingQueueSize
 	}
 
 	podTotalCount := len(podMetrics)
 	metrics.RecordInferencePoolAvgKVCache(pool.Name, kvCacheTotal/float64(podTotalCount))
-	metrics.RecordInferencePoolAvgQueueSize(pool.Name, float64(queueTotal/podTotalCount))
+	metrics.RecordInferencePoolAvgRequestsRunning(pool.Name, float64(runningTotal)/float64(podTotalCount))
+	metrics.RecordInferencePoolAvgQueueSize(pool.Name, float64(queueTotal)/float64(podTotalCount))
 	metrics.RecordInferencePoolReadyPods(pool.Name, float64(podTotalCount))
 }

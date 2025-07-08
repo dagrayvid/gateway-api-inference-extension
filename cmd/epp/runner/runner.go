@@ -114,6 +114,10 @@ var (
 			"are assumed to be named tls.crt and tls.key, respectively. If not set, and secureServing is enabled, "+
 			"then a self-signed certificate is used.")
 	// metric flags
+	totalRunningRequestsMetric = flag.String(
+		"totalRunningRequestsMetric",
+		runserver.DefaultTotalRunningRequestsMetric,
+		"Prometheus metric for the number of running requests.")
 	totalQueuedRequestsMetric = flag.String(
 		"totalQueuedRequestsMetric",
 		runserver.DefaultTotalQueuedRequestsMetric,
@@ -230,6 +234,7 @@ func (r *Runner) Run(ctx context.Context) error {
 
 	// --- Setup Datastore ---
 	mapping, err := backendmetrics.NewMetricMapping(
+		*totalRunningRequestsMetric,
 		*totalQueuedRequestsMetric,
 		*kvCacheUsagePercentageMetric,
 		*loraInfoMetric,

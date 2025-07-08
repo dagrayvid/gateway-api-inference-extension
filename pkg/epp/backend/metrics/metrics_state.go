@@ -36,7 +36,7 @@ type MetricsState struct {
 	WaitingModels map[string]int
 	// MaxActiveModels is the maximum number of models that can be loaded to GPU.
 	MaxActiveModels         int
-	RunningQueueSize        int
+	RunningRequestsSize     int
 	WaitingQueueSize        int
 	KVCacheUsagePercent     float64
 	KvCacheMaxTokenCapacity int
@@ -71,7 +71,7 @@ func (s *MetricsState) Clone() *MetricsState {
 		ActiveModels:            activeModels,
 		WaitingModels:           waitingModels,
 		MaxActiveModels:         s.MaxActiveModels,
-		RunningQueueSize:        s.RunningQueueSize,
+		RunningRequestsSize:     s.RunningRequestsSize,
 		WaitingQueueSize:        s.WaitingQueueSize,
 		KVCacheUsagePercent:     s.KVCacheUsagePercent,
 		KvCacheMaxTokenCapacity: s.KvCacheMaxTokenCapacity,
